@@ -7,25 +7,36 @@ var getWhere = function (collection, query, callback) {
             throw err;
         }
 
-        callback(db.collection(collection).get(query).toArray());
-
-        db.close();
+        db.collection(collection).find(query).toArray(function (err, data) {
+            console.log('err', err, 'data', data);
+            callback(data);
+            db.close();
+        });
     });
 };
 
-module.getColleges = function (callback) {
+module.exports.getColleges = function (callback) {
     getWhere('colleges', {}, callback);
 };
 
-module.getDegrees = function (collegeName, callback) {
+module.exports.getDegrees = function (collegeName, callback) {
     getWhere('degrees', {
         college: collegeName
     }, callback);
 };
 
-module.getRequirments = function (collegeName, degreeName, callback) {
+module.exports.getRequirments = function (collegeName, degreeName, callback) {
     getWhere('requirments', {
         college: collegeName,
         degree: degreeName
     }, callback);
+};
+
+module.exports.getCourses = function (collegeName, degreeName, reqName, callback) {
+    getWhere('courses', {
+            fulfils: {
+                $elemMatch: reqName
+            }
+        },
+        callback);
 };
