@@ -4,20 +4,22 @@ var express = require('express'),
     path = require('path'),
     compression = require('compression'),
     bodyParser = require('body-parser');
-
 app.use(compression({
     threshold: 512
 }));
-
 // Serve static content from the public folder
 app.use(express.static(path.join(__dirname, 'static')));
-
 // Parse incoming json requests
 app.use(bodyParser.json());
-
 app.get('/colleges', function (req, res) {
     res.send({
-        colleges: ['UCB', 'UCD', 'UCI', 'UCSB', 'UCSC', 'UCLA', 'UCM', 'UCSD', 'UCR']
+        colleges: ['Select a community college', 'Cabrillo College', 'De Anza College', 'Mission College', 'Diablo Valley College', 'Berkeley City College', 'Pasadena College']
+    });
+});
+
+app.get('/universities', function (req, res) {
+    res.send({
+        universities: ['Select a 4-year university', 'UCB', 'UCD', 'UCI', 'UCSB', 'UCSC', 'UCLA', 'UCM', 'UCSD', 'UCR']
     });
 });
 
@@ -25,6 +27,7 @@ app.get('/degrees', function (req, res) {
     // query: The 1 university user wants to transfer to
     var query = req.query;
     var college = query.college;
+    var university = query.university;
     // TODO: pass in the name of the university to William for filtering
     // return all the available degrees at that particular university
     // to client
@@ -32,18 +35,18 @@ app.get('/degrees', function (req, res) {
         degrees: ['Computer Science', 'Computer Engineering', 'Electrical Engineering', 'Mechanical Engineering', 'Physics', 'Sociology']
     });
 });
-
 app.get('/requirements', function (req, res) {
     var query = req.query;
     var college = query.college;
+    var university = query.university;
     var degreee = query.degree;
     // pass in college and degree to William
     res.send({
         // if CompSci at UCSC
-        requirements: ['CS 20J', 'CS12J', 'CS 21', 'CS 23', 'MATH 5A', 'MATH 5B', 'CS 24', 'MATH 5C', 'MATH 6', 'PHYS 4A', 'PHYS 4B', 'PHYS 4C', 'CHEM 1A', 'CHEM 1B']
+        requirementCollege: ['CS 20J', 'CS 21', 'CS 23', 'MATH 5A', 'MATH 5B', 'CS 24', 'MATH 5C', 'MATH 6', 'PHYS 4A'],
+        requirementUniversity: ['CMPS 12A & CMPS 12L', 'CMPS 12B & 12M', 'CMPE 16', 'MATH 23A', 'AMS 10', 'PHYS 5A & 5L']
     });
 });
-
 app.get('/courses', function (req, res) {
     var query = req.query;
     var college = query.college;
@@ -78,7 +81,7 @@ app.get('/courses', function (req, res) {
                 prerequisite: "Math 4(Precalculus)"
             },
             {
-                college: "De Anza",
+                college: "Diablo Valley",
                 system: "quarter",
                 course: "Math 1A",
                 section: "87808",
@@ -87,12 +90,11 @@ app.get('/courses', function (req, res) {
                 units: "5",
                 instructor: "Bean",
                 room: "990",
-                prerequisite: "Math 4(Precalculus)"
+                prerequisite: "Math 20(Precalculus)"
             }
         ]
     });
 });
-
 // Listen at port 3000
 app.listen(port);
 console.log('Listening on port', port);
