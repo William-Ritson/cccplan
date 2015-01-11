@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/bootstrap.css">
     <!-- CSS Libs -->
     <link rel="stylesheet" href="css/bootstrap-theme.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <!-- Our CSS -->
     <link rel="stylesheet" href="css/main.css">
     <!-- Polyfil. Makes browsers work more consitently -->
@@ -23,18 +24,20 @@
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#">Home</a>
                 </li>
-                <li><a href="#">Profile</a>
+                <li><a href="#Profile">Profile</a>
                 </li>
-                <li><a href="#">About</a>
+                <li><a href="#About">About</a>
                 </li>
             </ul>
         </div>
         <h1 id="header">CCC Plan</h1>
     </div>
-    <div class="col-md-8 col-md-offset-1">
+
+    <!-- Table of Requirments -->
+    <div class="col-md-8 col-md-offset-2">
         <table id="course-table" class="table table">
             <thead>
-                <tr>
+                <tr id="table1-row">
                     <th>
                         <label for="college">From</label>
                         <select id="college" style="display:inline; width: 60%" class="form-control" onchange="fillDegrees()"></select>
@@ -51,6 +54,26 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Table of Offered Sections -->
+    <div id="session-mode" class="col-md-8 col-md-offset-2" hidden="true">
+        <h3 id="course-heading">    </h3>
+        <table id="section-table" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Session Number</th>
+                    <th>Meeting Info</th>
+                    <th>Capacity</th>
+                    <th>Instructor</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+
+
 
     <!-- JS Libs -->
     <script src="js/vendor/jquery.js"></script>
