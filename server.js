@@ -36,9 +36,24 @@ app.get('/majors', function (req, res) {
 
 app.get('/table', function (req, res) {
     dbq.getTable(req.query.from, req.query.to, req.query.major, function (item) {
+        console.log('table resp', item);
         res.send(item);
     });
 });
+
+app.get('/ids', function (req, res) {
+    console.log(req.query);
+    dbq.getClassIds(req.query, function (item) {
+        res.send(item);
+    });
+});
+
+app.get('/course', function (req, res) {
+    dbq.getCourse(req.query, function (item) {
+        res.send(item);
+    });
+});
+
 // Listen at port 3000
 app.listen(port);
 console.log('Listening on port', port);

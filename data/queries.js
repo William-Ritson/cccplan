@@ -45,7 +45,35 @@ module.exports.getMajors = function (from, to, callback) {
     });
 };
 
+
+module.exports.getClassIds = function (query, callback) {
+
+    var itemQuery = {
+        college: query.college,
+    };
+    console.log(itemQuery);
+    getWhere('courses', itemQuery, function (items) {
+        console.log('this should not be blank', items);
+        callback(_.pluck(items, 'id').filter( function (item) {
+            return item !== '';
+        }));
+    });
+};
+
+
+
+module.exports.getCourse = function (query, callback) {
+    getWhere('courses', {
+        college: query.college,
+        id: query.id
+    }, function (items) {
+        callback(items[0]);
+    });
+};
+
+
 module.exports.getTable = function (from, to, major, callback) {
+    console.log(from, to, major);
     getWhere('agreements', {
         from: from,
         to: to,
