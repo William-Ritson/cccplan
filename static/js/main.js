@@ -23,29 +23,29 @@ function checkValidUniversity() {
 }
 
 function fillColleges() {
-    $.get('/colleges', function (data) {
+    $.get('/from', function (data) {
         console.log(data);
-        data.colleges.forEach(function (college) {
+        data.from.forEach(function (college) {
             $('#college').append('<option value="' + college + '">' + college + '</option>');
         });
     });
 }
 
 function fillUniversities() {
-    $.get('/universities', function (data) {
-        data.universities.forEach(function (university) {
+    $.get('/to', function (data) {
+        data.to.forEach(function (university) {
             $('#university').append('<option value="' + university + '">' + university + '</option>');
         });
     });
 }
 
 function fillDegrees() {
-    if ($('#major').is(':empty')) {
-        if (getCollege() !== "Select a community college" &&
-            getUniversity() !== "Select a 4-year university") {
+    if (getCollege() !== "Select a community college" &&
+        getUniversity() !== "Select a 4-year university") {
+        if ($('#major').is(':empty')) {
             $('#major').prop('disabled', false);
-            $.get('/degrees', function (data) {
-                data.degrees.forEach(function (major) {
+            $.get('/majors', function (data) {
+                data.majors.forEach(function (major) {
                     $('#major').append('<option value="' + major + '">' + major + '</option>');
                 });
             });
@@ -53,10 +53,35 @@ function fillDegrees() {
     } else {
         document.getElementById('major').innerHTML = "";
         $('#major').prop('disabled', true);
-
+        $('#course-table tbody').empty();
     }
 }
 
+function displayTable() {
+
+    if (getMajor() === "Select a major") {
+        $('#course-table tbody').empty();
+    } else {
+        $.getJSON('/table', {
+            from: getCollege(),
+            to: getUniversity(),
+            major: getMajor()
+        }, function (data) {
+            var content = $('#course-table tbody'),
+                row;
+            console.log(data);
+            content.empty();
+            
+            data.forEach(function (rowData) {
+                row = $('<tr>');
+                row
+                    .append('<td class="clickable">' + rowData[0] + '</td>')
+                    .append('<td>' + rowData[1] + '</td>');
+                content.append(row);
+            });
+        });
+    }
+}
 
 $(document).ready(function () {
     fillColleges();

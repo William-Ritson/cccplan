@@ -9,8 +9,10 @@
 }
 
 
-
-
+.clickable: hover {
+    
+    font-weight: bold;   
+}
 
 
 

@@ -8,20 +8,16 @@
     <title>CCC Plan</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link rel="stylesheet" href="css/bootstrap.css">
     <!-- CSS Libs -->
     <link rel="stylesheet" href="css/bootstrap-theme.css">
-
     <!-- Our CSS -->
     <link rel="stylesheet" href="css/main.css">
-
     <!-- Polyfil. Makes browsers work more consitently -->
     <script src="js/vendor/modernizr-2.6.2.min.js"></script>
 </head>
 
 <body>
-
     <div class="col-md-10 col-md-offset-1">
         <div class="bs-example">
             <ul class="nav nav-tabs">
@@ -36,18 +32,18 @@
         <h1 id="header">CCC Plan</h1>
     </div>
     <div class="col-md-8 col-md-offset-1">
-        <table class="table">
+        <table id="course-table" class="table table">
             <thead>
                 <tr>
                     <th>
                         <label for="college">From</label>
-                        <select id="college" class="form-control" onchange="fillDegrees()"></select>
+                        <select id="college" style="display:inline; width: 60%" class="form-control" onchange="fillDegrees()"></select>
                     </th>
                     <th style="white-space: nowrap">
                         <label for="university" style="display: inline">Transfer to</label>
-                        <select id="university" style="display: inline; width: 45%" class="form-control" onchange="fillDegrees()"></select>
+                        <select id="university" style="display: inline; width: 40%" class="form-control" onchange="fillDegrees()"></select>
                         <label for="major" style="display: inline">Major</label>
-                        <select id="major" style="display: inline; width: 45%" class="form-control" disabled="true"></select>
+                        <select id="major" style="display: inline; width: 40%" class="form-control" disabled="true" onchange="displayTable()"></select>
                     </th>
                 </tr>
             </thead>
@@ -56,15 +52,11 @@
         </table>
     </div>
 
-
-
     <!-- JS Libs -->
     <script src="js/vendor/jquery.js"></script>
     <script src="js/vendor/bootstrap.js"></script>
-
     <!-- Our JS. -->
     <script src="js/main.js"></script>
-
 
 </body>
 
