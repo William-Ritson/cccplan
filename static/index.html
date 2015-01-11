@@ -19,18 +19,25 @@
 </head>
 
 <body>
-    <div class="col-md-10 col-md-offset-1">
-        <div class="bs-example">
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#">Home</a>
-                </li>
-                <li><a href="#Profile">Profile</a>
-                </li>
-                <li><a href="#About">About</a>
-                </li>
-            </ul>
+    <!--
+    <nav class="navbar navbar-default col-md-8 col-md-offset-2">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Home</a>
+            </div>
+
         </div>
-        <h1 id="header">CCC Plan</h1>
+    </nav>
+   -->
+    <div class="col-md-10 col-md-offset-1">
+        <h1>CCC Plan</h1>
+        <h2 class="subtitle">Find your future today</h2>
     </div>
 
     <!-- Table of Requirments -->
@@ -39,7 +46,7 @@
             <thead>
                 <tr id="table1-row">
                     <th>
-                        <label for="college">From</label>
+                        <label for="college">Transfer from</label>
                         <select id="college" style="display:inline; width: 60%" class="form-control" onchange="fillDegrees()"></select>
                     </th>
                     <th style="white-space: nowrap">
@@ -57,19 +64,28 @@
 
     <!-- Table of Offered Sections -->
     <div id="session-mode" class="col-md-8 col-md-offset-2" hidden="true">
-        <h3 id="course-heading">    </h3>
-        <table id="section-table" class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Section Number</th>
-                    <th>Instructor</th>
-                    <th> Avalible/Capacity/Waitlist</th>
-                    <th>Meeting Info</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 id="course-heading" class="panel-title">Panel title</h3>
+            </div>
+            <table id="section-table" class="table">
+                <thead>
+                    <tr>
+                        <th>Section Number</th>
+                        <th>Instructor</th>
+                        <th>Avalible/Capacity/Waitlist</th>
+                        <th>Meeting Info</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <a class="return-btn btn btn-primary btn-md" href="#">Back</a>
+
+        </div>
+
+
     </div>
 
 

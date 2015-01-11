@@ -99,6 +99,9 @@ var populateSections = function (college, course) {
         console.log('course', data);
         var title = $('#course-heading').empty();
         title.text(data.name + ' (' + data.id + ') at ' + data.college);
+        
+        var content = $('#section-table tbody');
+        content.empty();
         data.sessions.forEach(function (rowData) {
             var row = $('<tr>');
             row
@@ -106,7 +109,7 @@ var populateSections = function (college, course) {
                     '<td>' + rowData.teacher + '</td>' +
                     '<td>' + rowData.capacity + '</td>' +
                     '<td>' + rowData.meetings +  '</td>');
-            $('#section-table tbody').append(row);
+            content.append(row);
         });
     });
 
