@@ -1,4 +1,9 @@
-var http = require('http');
+var http = require('http'),
+    request = require('request'),
+    fs = require('fs'),
+    dbin = require('../data/dbinput.js');
+
+  
 
 
 var queryString = function (query) {
@@ -15,11 +20,7 @@ var queryString = function (query) {
     return res;
 };
 
-var options = {
-    hostname: 'web1.assist.org',
-    port: 80,
-};
-
+var respCount = 0;
 var runQuery = function (fromSchool, toSchool, major) {
     var query = [
         ['aay', '13-14'],
@@ -37,18 +38,31 @@ var runQuery = function (fromSchool, toSchool, major) {
         ['mver', 2],
         ['kind', 5],
         ['dt', 2]
-    ];
+    ],
+        url = 'http://web1.assist.org/cgi-bin/REPORT_2/Rep2.pl' + queryString(query);
 
-    options.path = '/cgi-bin/REPORT_2/Rep2.pl' + queryString(query);
 
-    http.get(options, function (res) {
-        console.log('Queried from', fromSchool, 'to', toSchool, 'major', major, 'STATUS: ' + res.statusCode);
-        res.setEncoding('utf8');
-        res.on('data', function (chunk) {
-            //console.log('BODY: ' + chunk);
-        });
-    }).on('error', function (e) {
-        console.log('problem with request: ', fromSchool, 'to', toSchool, 'major', major, 'error: ' + e.message);
+    request(url, function (error, response, body) {
+        if (!error) {
+            respCount++;
+            var fn = 'scraped/' + fromSchool + 'to' + toSchool + 'in' + major + '.html';
+            console.log('ok', fromSchool, 'to', toSchool, 'major', major, 'STATUS: ' + response.statusCode);
+            console.log('saving to', '*' + fn + '*');
+
+            fs.writeFileSync(fn, body);
+            dbin.storeAgreement({
+                from: fromSchool,
+                to: toSchool,
+                major: major,
+                source: body,
+                srcUrl: url,
+                scrapedDate: new Date()
+            });
+            console.log(respCount, 'responces \n');
+
+        } else {
+            console.log('error', fromSchool, 'to', toSchool, 'major', major, 'STATUS: ' + error);
+        }
     });
 };
 
@@ -60,6 +74,7 @@ var fromSchools = [
     ],
     majors = [
         'CMPSBS', // CS BS
+        'EECS',
         'BIOINFO', // Bioinformatics
         'MATH',
         'PHYS'
@@ -67,14 +82,16 @@ var fromSchools = [
     toSchools = [
         'UCSC',
         'UCB',
-        'UCD',
-        'UCLA'
     ];
 
+var reqCount = 0;
 toSchools.forEach(function (toSchool) {
     majors.forEach(function (major) {
         fromSchools.forEach(function (fromSchool) {
+            console.log('start query', fromSchool, 'to', toSchool, 'major', major);
             runQuery(fromSchool, toSchool, major);
+            reqCount++;
         });
     });
 });
+console.log('sent', reqCount, 'requests');
