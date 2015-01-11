@@ -3,9 +3,6 @@ var http = require('http'),
     fs = require('fs'),
     dbin = require('../data/dbinput.js');
 
-  
-
-
 var queryString = function (query) {
     var res = '?',
         first = true;
@@ -21,7 +18,13 @@ var queryString = function (query) {
 };
 
 var respCount = 0;
-var runQuery = function (fromSchool, toSchool, major) {
+var runQuery = function (queries) {
+    var nextQ = queries.pop(),
+        major = nextQ.major,
+        toSchool = nextQ.to,
+        fromSchool = nextQ.from;
+    console.log('Query from', fromSchool, 'to', toSchool, 'in', major);
+
     var query = [
         ['aay', '13-14'],
         ['dora', major],
@@ -47,7 +50,6 @@ var runQuery = function (fromSchool, toSchool, major) {
             respCount++;
             var fn = 'scraped/' + fromSchool + 'to' + toSchool + 'in' + major + '.html';
             console.log('ok', fromSchool, 'to', toSchool, 'major', major, 'STATUS: ' + response.statusCode);
-            console.log('saving to', '*' + fn + '*');
 
             fs.writeFileSync(fn, body);
             dbin.storeAgreement({
@@ -58,40 +60,60 @@ var runQuery = function (fromSchool, toSchool, major) {
                 srcUrl: url,
                 scrapedDate: new Date()
             });
-            console.log(respCount, 'responces \n');
-
         } else {
             console.log('error', fromSchool, 'to', toSchool, 'major', major, 'STATUS: ' + error);
+        }
+        console.log('starting next query remainig', queries.length);
+        if (queries.length > 0) {
+            runQuery(queries);
         }
     });
 };
 
 
+
 var fromSchools = [
-        'ARC',
+        'WVC', // West Valley College
+        'HARTNELL',
         'DAC', //De Anza
+        'MONTEREY',
         'CABRILLO'
     ],
-    majors = [
-        'CMPSBS', // CS BS
-        'EECS',
-        'BIOINFO', // Bioinformatics
-        'MATH',
-        'PHYS'
-    ],
     toSchools = [
-        'UCSC',
-        'UCB',
+        {
+            id: 'UCD',
+            name: 'University of California Davis',
+            majors: ['MATH.B.S', 'BIOLSCI.B.S.', 'HIST.A.B.', 'ENGLISH.A.B.', 'CHEM.B.S.', 'PHYSICS.B.S.', 'COMP.SCI.B.S.', 'ENG.CIV.B.S.', 'GEOLOGY.B.S', 'ECON.A.B.', 'POL.SCI.A.B.', 'PHILOS.A.B.', 'SOCIOL.A.B.', 'PSYCH.A.B.', 'INTREL']
+        },
+        {
+            id: 'UCSC',
+            name: 'University of California Santa Cruz',
+            majors: ['MATH', 'BIOL', 'HIS', 'CHEM', 'PHYS', 'CMPSBS', 'EE', 'ECON', 'POLI', 'PHIL', 'SOCY', 'PSYC', 'BME']
+        },
+        {
+            id: 'UCB',
+            name: 'University of Califronia Berkly',
+            majors: ['MATH', 'CHEMBIO', 'HISTORY', 'ENGLISH', 'CHEM.AB.BS ', 'PHYSICS', 'CS-AB', 'EECS', 'ECON', 'POL-SCI', 'PHILOS', 'SOCIOL', 'PSYCH', 'BUS ADM']
+        },
+        {
+            id: 'UCSD',
+            name: 'University of California San Diego',
+            majors: ['MATHEMATICS', 'GENERAL BIOLOGY', 'HISTORY', 'CHEMISTRY', 'PHYSICS B.S.', 'COMP SCI', 'ELEC ENGR', 'ECONOMICS', 'POLITICAL SCIENCE', 'PHILOSOPHY', 'SOCIOLOGY', 'PSYCHOLOGY']
+        }
     ];
 
-var reqCount = 0;
+var queries = [];
 toSchools.forEach(function (toSchool) {
-    majors.forEach(function (major) {
+    toSchool.majors.forEach(function (major) {
         fromSchools.forEach(function (fromSchool) {
-            console.log('start query', fromSchool, 'to', toSchool, 'major', major);
-            runQuery(fromSchool, toSchool, major);
-            reqCount++;
+            queries.push({
+                to: toSchool.id,
+                from: fromSchool,
+                major: major
+            });
+
         });
     });
 });
-console.log('sent', reqCount, 'requests');
+
+runQuery(queries);
