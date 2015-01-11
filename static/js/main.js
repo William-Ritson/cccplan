@@ -23,17 +23,17 @@ function checkValidUniversity() {
 }
 
 function fillColleges() {
-    $.get('/from', function (data) {
+    $.getJSON('/from', function (data) {
         console.log(data);
-        data.from.forEach(function (college) {
+        data.forEach(function (college) {
             $('#college').append('<option value="' + college + '">' + college + '</option>');
         });
     });
 }
 
 function fillUniversities() {
-    $.get('/to', function (data) {
-        data.to.forEach(function (university) {
+    $.getJSON('/to', function (data) {
+        data.forEach(function (university) {
             $('#university').append('<option value="' + university + '">' + university + '</option>');
         });
     });
@@ -47,8 +47,11 @@ function fillDegrees() {
         document.getElementById('major').innerHTML = "";
         $('#course-table tbody').empty();
         $('#major').prop('disabled', false);
-        $.get('/majors', function (data) {
-            data.majors.forEach(function (major) {
+        $.get('/majors', {
+            from: getCollege(),
+            to: getUniversity()
+        }, function (data) {
+            data.forEach(function (major) {
                 $('#major').append('<option value="' + major + '">' + major + '</option>');
             });
         });
@@ -65,48 +68,50 @@ var getIds = function () {
     $.ajax({
         url: '/ids',
         async: false,
+        dataType: "json",
+        data: {
+            college: getCollege()
+        },
         success: function (data) {
-            //alert(data);    
             ret = data;
+            console.log(data);
         }
     });
     return ret;
 };
 
-var addLinks = function (text) {
-    var temp = getIds();
-    //alert("temp "+temp);
-    var a;
-    for (var id in temp) {
-        //alert("id " + id)
-        if (text === temp[id]) {
-            a = text.replace(temp[id], '<a href="#' + getCollege() + '/' + temp[id] + '">' + temp[id] + '</a>');
-            //alert("a " + a);
-            return a;
-        }
-    }
+
+
+var addLinks = function (ids, text) {
+    ids.forEach(function (id) {
+        text = text.replace(id, '<a href="#' + getCollege() + '/' + id + '">' + id + '</a>');
+    });
     return text;
 };
 
 var populateSections = function (college, course) {
-    // get sections form the db and do stuff with them    
+    // get sections form the db and do stuff with them  
+    console.log('pop sections');
     $.getJSON('/course', {
+        college: college,
+        id: course
     }, function (data) {
+        console.log('course', data);
         var title = $('#course-heading').empty();
         title.text(data.name + ' (' + data.id + ') at ' + data.college);
         data.sessions.forEach(function (rowData) {
             var row = $('<tr>');
             row
-                .append('<td>' + rowData.sesssionNumber + '</td>' +
-                    '<td>' + rowData.meetings + '</td>' +
+                .append('<td>' + rowData.sessionNumber + '</td>' +
+                    '<td>' + rowData.teacher + '</td>' +
                     '<td>' + rowData.capacity + '</td>' +
-                    '<td>' + rowData.teacher + '</td>');
+                    '<td>' + rowData.meetings +  '</td>');
             $('#section-table tbody').append(row);
         });
     });
-    
+
 };
-    /*
+/*
     $.getJSON('/ids', {
         college: college,
         course: course
@@ -124,7 +129,7 @@ var populateSections = function (college, course) {
 */
 
 
-window.onhashchange = function (event) {
+var setHashMode  = function () {
     var newHash = location.hash,
         college = newHash.split('/')[0],
         course = newHash.split('/')[1];
@@ -132,22 +137,24 @@ window.onhashchange = function (event) {
     if (college && course) {
         $('#course-table').prop('hidden', true);
         $('#session-mode').prop('hidden', false);
-        populateSections(college, course);
+        populateSections(college.replace('#', ''), course);
     } else {
         $('#course-table').prop('hidden', false);
         $('#session-mode').prop('hidden', true);
     }
 };
 
-function displayTable() {
+window.onhashchange = setHashMode;
 
+function displayTable() {
     if (getMajor() === "Select a major") {
         $('#course-table tbody').empty();
     } else {
+        var ids = getIds();
         $.getJSON('/table', {
-            //from: getCollege(),
-            //to: getUniversity(),
-            //major: getMajor()
+            from: getCollege(),
+            to: getUniversity(),
+            major: getMajor()
         }, function (data) {
 
             var content = $('#course-table tbody'),
@@ -157,8 +164,8 @@ function displayTable() {
                 row = $('#course-table');
                 row
                 // ADD LINKS BELOW
-                .append('<tr><td>' + addLinks(rowData[0]) + '</td>' +
-                    '<td>' + rowData[1] + '</td></tr>');
+                .append('<tr><td>' + addLinks(ids, rowData[1]) + '</td>' +
+                    '<td>' + rowData[0] + '</td></tr>');
 
             });
         });
@@ -168,4 +175,5 @@ function displayTable() {
 $(document).ready(function () {
     fillColleges();
     fillUniversities();
+    setHashMode();
 });
